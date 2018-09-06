@@ -1,0 +1,694 @@
+  <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  <html>
+  <head>
+  <title>WeMos D1 mini - ESP8266 Control</title>
+  <style type="text/css">
+  .onoffswitch {
+   position: relative;
+   width: 24px;
+   -webkit-user-select:none;
+   -moz-user-select:none;
+   -ms-user-select: none;
+}
+  .onoffswitch-checkbox {
+   display: none;
+}
+  .onoffswitch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #8084B0;
+    border-radius: 10px;
+}
+  .onoffswitch-inner {
+   display: block;
+   width: 200%;
+   margin-left: 0%; /*1*/
+   transition: margin 0.3s ease-in 0s;
+}
+  .onoffswitch-inner:before, .onoffswitch-inner:after {
+   display: block;
+   float: left;
+   width: 50%;
+  height: 6px;
+  padding: 0;
+  line-height: 6px;
+  font-size: 14px;
+  color: white;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+  .onoffswitch-inner:before {
+  content: "";
+  padding-left: 10px;
+  background-color: #FF0000;
+  color: #999999;
+}
+  .onoffswitch-inner:after {
+  content: "";
+  padding-right: 10px;
+  background-color: #0AFF0A;
+  color: #FFFFFF;
+  text-align: right;
+}
+  .onoffswitch-switch {
+  display: block;
+  width: 10px;
+  margin: -2px;
+  background: #FFFFFF;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 14px; /*???2*/
+  border: 2px solid #8084B0;
+  border-radius: 10px;
+  transition: all 0.3s ease-in 0s;
+}
+  .onoffswitch-switch2 {
+  display: block;
+  width: 10px;
+  margin: -2px;
+  background: #FFFFFF;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0px;
+  border: 2px solid #8084B0;
+  border-radius: 10px;
+  transition: all 0.3s ease-in 0s;
+}
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: -100%;
+}
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+  right: 0px;
+}
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch2 {
+  right: 14px;
+}
+  .onoffswitch-inner2 {
+  display: block;
+  width: 200%;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+}
+  .onoffswitch-inner2:before, .onoffswitch-inner2:after {
+  display: block;
+  float: left;
+  width: 50%;
+  height: 6px;
+  padding: 0;
+  line-height: 6px;
+  font-size: 14px;
+  color: white;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+  .onoffswitch-inner2:before {
+  content: "";
+  padding-right: 10px;
+  background-color: #0AFF0A;
+  color: #FFFFFF;
+  text-align: right;
+}
+  .onoffswitch-inner2:after {
+  content: "";
+  padding-left: 10px;
+  background-color: #FF0000;
+  color: #999999;
+}
+  .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner2 {
+  margin-left: 0;
+}
+  .out_val {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  margin-left:40px;
+  border: 2px solid #eee;
+  border-radius: 2px;
+  box-shadow: inset 0 1px #ccc, inset 0 1px #575555, inset 0 -1px #00c;
+  background: #fef linear-gradient(#BCBCBC, #fff0f5);
+  overflow: hidden;
+}
+  div.ex_output {
+  width:258px;
+  text-align:center;
+  background-color: #000080;
+  margin-left:6px;
+}
+  div.ex_output output {
+  font-weight:bold;
+  font-size:16px;
+  color: #CCC;
+}
+  div.output {
+  width:80px;
+  background-color: #EFE3CF;
+  border: 2px solid #006;
+  text-align:center;
+  margin-bottom:4px;
+  margin-right:2px;
+  float:left;
+}
+  div.output div {
+  width:80px;
+  background-color:#C1C5F7;
+}
+  div.output output {
+  font-weight:bold;
+  font-size:16px;
+  color:#009;
+}
+  .rangeP {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  border: 2px solid #eee;
+  border-radius: 2px;
+  background: #fef linear-gradient(#BCBCBC, #fff0f5);
+  overflow: hidden;
+}
+  .rangeP::-moz-range-thumb {
+  border-radius: 2px;
+  box-shadow: -13px 0 #40310a, -26px 0 #40310a, -39px 0 #40310a, -52px 0 #40310a, -65px 0 #40310a, -78px 0 #40310a, -91px 0 #40310a, -104px 0 #40310a, -117px 0 #40310a, -130px 0 #40310a, -143px 0 #40310a, -156px 0 #40310a;
+}
+  .rangeP::-moz-range-track {
+  background: none;
+  border: none;
+}
+  .rangeP::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width:15px;
+  height:8px;
+  border: 1px solid #000081;
+  border-radius: 2px;
+  background-image:linear-gradient(#dedede, #8282ff);
+  box-shadow: -13px 0 #1c59f4, -26px 0 #1c59f4, -39px 0 #1c55eb, -52px 0 #1c50db, -65px 0 #1b49c9, -78px 0 #1b43b7, -91px 0 #1b3a9e, -104px 0 #1b338d, -117px 0 #1b2d7a, -130px 0 #1b286e, -143px 0 #1b286d, -156px 0 #1b2566;
+}
+  .column_view-off {
+  display: none;
+  text-align: center;
+  color: #000;
+}
+  .column_view-on {
+  background-color: #BBBEFF;
+}
+  .mode_view-off {
+  display: none;
+}
+  .mode_view-on {
+  background-color: #D1D2F3;
+}
+.but {
+display: block;
+width: 14px;
+height: 12px;
+margin: 5px;
+background:  #DDD1CC;
+-webkit-border-radius: 22px;
+-moz-border-radius: 22px;
+border-radius: 22px;
+cursor:pointer;
+-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .75);
+-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .75);
+box-shadow: 1px 1px 8px rgba(0, 0, 0, .75);
+border-top: 1px solid #b5b5b5;
+-webkit-box-shadow: 
+ inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+-moz-box-shadow: 
+ inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+box-shadow: 
+ inset 0 0 25px #e8e8e8, 0 1px 0 #c3c3c3, 0 2px 0 #c9c9c9, 0 2px 3px #333;
+}
+.but:active, .keydown {
+background: #D9D9FF;
+margin: 7px 5px 3px;
+-webkit-box-shadow:
+ inset 0 0 25px #d0d, 0 0 3px #333;
+-moz-box-shadow: 
+ inset 0 0 25px #d0d, 0 0 3px #333;
+box-shadow: 
+ inset 0 0 25px #d0d, 0 0 3px #333;
+border-top: 1px solid #eee;
+}
+</style>
+<script type= "text/javascript">
+  var str_URL = ""; 
+  var x =""; 
+  var y ="";
+  function cb_check0(id_cb) {
+  x = id_cb.name;
+  if (id_cb.checked) {
+  str_URL=x+"=1";
+} 
+else {
+  str_URL=x+"=0";
+}
+  trans_par(id_cb);
+}
+  function cb_check(id_cb) {
+  x = id_cb.name;
+  y = "c" + id_cb.id;
+  var rng = document.getElementById(y);
+  if (id_cb.checked) {
+  str_URL=x+"=1";
+  if (rng) {
+    rng.value = rng.max;sd_index(id_cb);
+  }
+} 
+else {
+  str_URL=x+"=0";
+  if (rng) {
+    rng.value = rng.min;
+  }
+}
+  trans_par(id_cb);
+}
+  function cb_check2(id_cb) {
+  x = id_cb.name;
+  y = "c" + id_cb.id;
+  var rng = document.getElementById(y);
+  if (id_cb.checked) {
+  str_URL=x+"=0";
+  if (rng) {
+    rng.value = rng.min;
+  }
+} 
+else {
+  str_URL=x+"=.value = rng.max1";
+if (rng) {
+  rng;
+}
+}
+  trans_par(id_cb);
+}
+  function ce_but(id_cb) {
+    x = id_cb.id;
+    str_URL=x+"=0";
+    trans_par(id_cb);
+  }
+  function sel_test(id_cb) {
+  var colo = id_cb.options[id_cb.selectedIndex].index;
+  switch (colo) {
+    case 0: set_color(id_cb, "#94fff8"); 
+    break
+    case 1: set_color(id_cb, "#fff894"); 
+    break
+    case 2: set_color(id_cb, "#f294ff");
+    break
+  default: set_color(id_cb, "#FFFFFF");
+   break
+ }
+  x = id_cb.id;
+  str_URL = x+"=" + colo;
+  trans_par(id_cb);
+}
+  function set_color(el, cl) {
+    el.style.backgroundColor = cl;
+  }
+  function trans_par(id_cb) {
+    var xmlhttp = getXmlHttp();
+    var str_URL2="/" + "?" + str_URL;
+    xmlhttp.open("GET", str_URL2, true);
+    var http = new XMLHttpRequest(), href = this.href;
+    http.open("GET", str_URL2);
+    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    http.timeout = 2000;
+    xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4) {
+      if(xmlhttp.status == 200) {
+        x = xmlhttp.responseText;
+        getParam(x);
+      }
+    }
+  }
+  xmlhttp.send(null);
+}
+
+function getXmlHttp() {
+  try {
+    return new ActiveXObject("Msxml2.XMLHTTP");
+  }
+   catch (e) {
+    try {
+    return new ActiveXObject("Microsoft.XMLHTTP");
+  } 
+  catch (ee) {
+  }
+}
+if (typeof XMLHttpRequest!="undefined") {
+  return new XMLHttpRequest();
+ }
+}
+  function polsun_val(id_cb) {
+  var x = id_cb.id;
+  var newstr = x.replace(new RegExp("cd"),"d");
+  if (id_cb.value >0) {
+    document.getElementById(newstr).checked=true;
+  }
+  else {
+    document.getElementById(newstr).checked=false;
+  }
+  str_URL = id_cb.id+"=" + id_cb.value;
+  document.getElementById("result1").value = str_URL;
+  sd_index(id_cb);trans_par(id_cb);
+}
+  function test_val1(id_cb){
+    x = id_cb.name;
+    str_io = x + "=" + id_cb.value;
+    str_URL = id_cb.value;
+    document.getElementById("result1").value = str_io;
+  }
+  function getParam(get) {
+  var tmp = new Array();
+  var tmp2 = new Array();
+  var param = new Array();
+  if (get != "") {
+  tmp = (get.substr(1)).split("&");
+  for (var i = 0; i < tmp.length; i++) {
+  tmp2 = tmp[i].split("=");
+  param[tmp2[0]] = tmp2[1];
+}
+  for (var key in param) {
+  if (param[key] != "") {
+  if (key.indexOf("cb") >= 0) {
+  var newstr = key.replace(new RegExp("cb"), "d");
+  if (param[key] > 0) {
+  document.getElementById(newstr).checked = true;
+  } 
+  else {
+  document.getElementById(newstr).checked = false;
+}
+  } 
+  else {
+  document.getElementById(key).value = param[key];
+  }
+}
+}
+}
+}
+  function toggleView(source, tableId, tag) {
+  var elems = document.getElementById(tableId).getElementsByTagName(tag);
+  for (i = 0; i < elems.length; ++i) {
+    toggleClasses(elems[i], "column_view-off", "column_view-on");
+}
+  return false;
+}
+  function toggleView_mode(source, tableId, tag) {
+  var elems = document.getElementById(tableId).getElementsByTagName(tag);
+  for (i = 0; i < elems.length; ++i) {
+    toggleClasses(elems[i], "mode_view-off", "mode_view-on");
+}
+  return false;
+}
+  function toggleClasses(elem, className1, className2) {
+    var clazz = elem.className.toString();
+  if (clazz.indexOf(className1) >= 0) {
+    elem.className = clazz.replace(className1, className2);
+  } 
+  else if (clazz.indexOf(className2) >= 0) {
+    elem.className = clazz.replace(className2, className1);
+  }
+}
+  function startTimer() {
+  var my_timer = document.getElementById("my_timer");
+  var time = my_timer.innerHTML;
+  var arr = time.split(":");
+  var h = arr[0];
+  var m = arr[1];
+  var s = arr[2];
+  if (s == 0) {
+  if (document.getElementById("tt1").checked) {
+  str_URL = "zz=0";
+  trans_par(document.getElementById("ce1"));
+}
+  s = document.getElementById("r_sec").value;
+}
+  else s--;
+  if (s < 10) s = "0" + s;
+  if (document.getElementById("tt1").checked) {
+  document.getElementById("my_timer").innerHTML = h+":"+m+":"+s;
+}
+  setTimeout(startTimer, 1000);
+}
+  function sd_index(id_cb) {
+  if (id_cb.id[0] == "c") {
+  var l = id_cb.id.length;
+  var sd = "s";
+  for (var i=1; i < id_cb.id.length; i++)
+  sd = sd + id_cb.id[i];
+  }
+  else {
+  sd = "s" + id_cb.id;
+}
+  var indout = document.getElementById(sd);
+  if (document.getElementById("ce1").checked) {
+  indout.selectedIndex  = 1;
+  indout.style.backgroundColor = "#fff894";
+}
+}
+  </script></head>
+  <body onload="startTimer()">
+  <div class= "ex_output">
+  <output id="ex_out"><span>WeMos D1 mini Control v1.03</span></output>
+  </div>
+  <table border="0">
+  <tr>
+  <td width="86"><div class="output">
+  <div><span>Can 1 = A0</span></div>
+  <output id="out1">0</output>
+  </div></td>
+  <td width="86"><div class="output">
+  <div><span>Can 2</span></div>
+  <output id="out2">0</output>
+  </div></td>
+  <td width="86"><div class="output">
+  <div><span>Can 3</span></div>
+  <output id="out3">0</output>
+  </div></td>
+  </tr>
+  <tr>
+  <td>&nbsp;&nbsp;
+  <input type="number" min="1" max="59" step="1" id="r_sec" style="width:72; text-align:center" value="5"/></td>
+  <td><input type="checkbox" id="tt1" name="tt1" onclick="cb_check0(this)" />
+  avto</td>
+  <td align="center"><span id="my_timer" style="color: #f00;  font-weight: bold;"> 00:00:10 </span></td>
+  </tr>
+  <tr align="center">
+  <td><input type="button" id="52" value="PWM" onclick="return toggleView(this, 'data-table', 'td')" style="width:64px" /></td>
+  <td>output
+  <input type="checkbox" id="ce1" name="ce1" onclick="cb_check0(this)" /></td>
+  <td><input type="button" id="522" value="mode" onclick="return toggleView_mode(this, 'data-table', 'td')" style="width:64px" /></td>
+  </tr>
+  </table>
+  <table id="data-table">
+  <tbody>
+  <tr bgcolor="#CCCCCC">
+  <td align="center"><strong>on/off</strong></td>
+  <td align="center" class="column_view-m column_view-off" style="background-color:#00C">&nbsp;</td>
+  <td align="center" class="mode_view-m mode_view-off"><strong>i</strong></td>
+  <td align="center" class="mode_view-m mode_view-off"><strong>mode</strong></td>
+  <td align="center"><strong>pin</strong></td>
+  <td align="center"><strong>instr</strong></td>
+  <td align="center" bgcolor="#666666">&nbsp;</td>
+  <td align="center"><strong>instr</strong></td>
+  <td align="center"><strong>pin</strong></td>
+  <td align="center" class="mode_view-m mode_view-off"><strong>mode</strong></td>
+  <td width="20" align="center" class="mode_view-m mode_view-off"><strong>i</strong></td>
+  <td align="center" class="column_view-m column_view-off" style="background-color:#00C"><span class="out_val">
+  <output id="result1">0</output>
+  </span></td>
+  <td width="34" align="center"><strong>on/off</strong></td>
+  </tr>
+  <tr>
+  <td width="38"><div class="but" id="cb17" onclick="ce_but(this)" style="background-color:  #FF0E0E;" /></td>
+  <td width="148" class="column_view-m column_view-off">reset</td>
+  <td class="mode_view-m mode_view-off">&nbsp;</td>
+  <td class="mode_view-m mode_view-off">&nbsp;</td>
+  <td width="36">&nbsp;</td>
+  <td width="53">reset</td>
+  <td width="1" bgcolor="#666666">&nbsp;</td>
+  <td>GPIO1</td>
+  <td>D10</td>
+  <td class="mode_view-m mode_view-off">TXD0</td>
+  <td class="mode_view-m mode_view-off">&nbsp;</td>
+  <td align="center" class="column_view-m column_view-off">&nbsp;</td>
+ <td><div class="onoffswitch">
+  <input type="checkbox" name="cb1" class="onoffswitch-checkbox" id="d1" onclick="cb_check0(this)"/>
+  <label class="onoffswitch-label" for="d1"> <span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>
+  <tr>
+  <td bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cbA0" class="onoffswitch-checkbox" id="A0" onclick="cb_check(this)" />
+  <label class="onoffswitch-label" for="A0"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td bgcolor="#CCCCCC" class="column_view-m column_view-off">&nbsp;</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><select id="sdA0" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td bgcolor="#CCCCCC">A0</td>
+  <td bgcolor="#CCCCCC">ADC0</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td bgcolor="#CCCCCC">GPIO3</td>
+  <td bgcolor="#CCCCCC">D9</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off">RXD0</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td align="center" bgcolor="#CCCCCC" class="column_view-m column_view-off">&nbsp;</td>
+  <td bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cb3" class="onoffswitch-checkbox" id="d3" onclick="cb_check0(this)"/>
+  <label class="onoffswitch-label" for="d3"> <span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>;
+  <tr>
+  <td><div class="onoffswitch">
+  <input type="checkbox" name="cb16" class="onoffswitch-checkbox" id="d16" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d16"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td align="center" class="column_view-m column_view-off" width="148">&nbsp;</td>
+  <td class="mode_view-m mode_view-off"><input type="checkbox" id="ci16" name="ci16" onclick="cb_check0(this)" disabled="disabled"/></td>
+  <td class="mode_view-m mode_view-off"><select id="sd16" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe"  selected="selected">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td>D0</td>
+  <td>GPIO16</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td>GPIO5</td>
+  <td>D1</td>
+  <td class="mode_view-m mode_view-off"><select id="sd5" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td class="mode_view-m mode_view-off"><input type="checkbox" id="ci5" name="ci5" onclick="cb_check0(this)" /></td>
+  <td align="center" bgcolor="#CCCCCC" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd5" value="0" max="1023" min="0" /></td>
+  <td><div class="onoffswitch">
+  <input type="checkbox" name="cb5" class="onoffswitch-checkbox" id="d5" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d5"><span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>;
+  <tr>
+  <td width="38" bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cb14" class="onoffswitch-checkbox" id="d14" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d14"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td align="center" bgcolor="#CCCCCC" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd14" value="0" max="1023" min="0" /></td>
+  <td width="20" bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><input type="checkbox" id="ci14" name="ci14" onclick="cb_check0(this)" /></td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><select id="sd14" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td bgcolor="#CCCCCC">D5</td>
+  <td bgcolor="#CCCCCC">GPIO14</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td bgcolor="#CCCCCC">GPIO4</td>
+  <td bgcolor="#CCCCCC">D2</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><select id="sd4" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><input type="checkbox" id="ci4" name="ci4" onclick="cb_check0(this)" /></td>
+  <td bgcolor="#CCCCCC" align="center" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd4" value="0" max="1023" min="0" /></td>;
+  <td bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cb4" class="onoffswitch-checkbox" id="d4" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d4" > <span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>
+  <tr>
+  <td><div class="onoffswitch">
+  <input type="checkbox" name="cb12" class="onoffswitch-checkbox" id="d12" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d12"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td align="center" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd12" value="0" max="1023" min="0" /></td>
+  <td class="mode_view-m mode_view-off"><input type="checkbox" id="ci12" name="ci12" onclick="cb_check0(this)" /></td>
+  <td class="mode_view-m mode_view-off"><select id="sd12" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td>D6</td>
+  <td>GPIO12</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td>GPIO0</td>
+  <td>D3</td>
+  <td class="mode_view-m mode_view-off"><select id="sd0" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9">Output</option>
+  </select></td>
+  <td class="mode_view-m mode_view-off"><input type="checkbox" id="ci0" name="ci0" onclick="cb_check0(this)" /></td>;
+  <td align="center" bgcolor="#CCCCCC" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd0" value="0" max="1023" min="0" /></td>
+  <td><div class="onoffswitch">
+  <input type="checkbox" name="cb0" class="onoffswitch-checkbox" id="d0" onclick="cb_check(this)" />
+  <label class="onoffswitch-label" for="d0"> <span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>
+  <tr>
+  <td bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cb13" class="onoffswitch-checkbox" id="d13" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d13"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td align="center" bgcolor="#CCCCCC" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd13" value="0" max="1023" min="0" /></td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><input type="checkbox" id="ci13" name="ci13" onclick="cb_check0(this)" /></td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><select id="sd13" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td bgcolor="#CCCCCC">D7</td>
+  <td bgcolor="#CCCCCC">GPIO13</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td bgcolor="#CCCCCC">GPIO2</td>
+  <td bgcolor="#CCCCCC">D4</td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><select id="sd2" onchange="sel_test(this)">
+  <option  style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td bgcolor="#CCCCCC" class="mode_view-m mode_view-off"><input type="checkbox" id="ci2" name="ci2" onclick="cb_check0(this)" /></td>
+  <td bgcolor="#CCCCCC" align="center" class="column_view-m column_view-off"><input type="range" onchange="polsun_val(this)" class="rangeP" id="cd2" value="0" max="1023" min="0" /></td>
+  <td bgcolor="#CCCCCC"><div class="onoffswitch">
+  <input type="checkbox" name="cb2" class="onoffswitch-checkbox" id="d2" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d2"><span class="onoffswitch-inner2"></span> <span class="onoffswitch-switch"></span></label>
+  </div></td>
+  </tr>
+  <tr>
+  <td><div class="onoffswitch">
+  <input type="checkbox" name="cb15" class="onoffswitch-checkbox" id="d15" onclick="cb_check(this)"/>
+  <label class="onoffswitch-label" for="d15"> <span class="onoffswitch-inner"></span><span class="onoffswitch-switch2"></span></label>
+  </div></td>
+  <td align="center" class="column_view-m column_view-off">&nbsp;</td>
+  <td class="mode_view-m mode_view-off"><input type="checkbox" id="ci15" name="ci15" onclick="cb_check0(this)" /></td>
+  <td class="mode_view-m mode_view-off"><select id="sd15" onchange="sel_test(this)">
+  <option style="background-color: #d9fffe">Input</option>
+  <option style="background-color: #fffed9" selected="selected">Output</option>
+  </select></td>
+  <td>D8</td>
+  <td>GPIO15</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td>&nbsp;</td>
+  <td>GND</td>
+  <td class="mode_view-m mode_view-off">&nbsp;</td>
+  <td class="mode_view-m mode_view-off">&nbsp;</td>
+  <td align="center" class="column_view-m column_view-off">&nbsp;</td>
+  <td>&nbsp;</td>
+  </tr>
+  <tr>
+  <td bgcolor="#E10000" style="font-size:18px; font-weight:600">&nbsp;&larr;</td>
+  <td bgcolor="#E10000" class="column_view-m column_view-off">&nbsp;</td>
+  <td bgcolor="#E10000" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td bgcolor="#E10000" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td bgcolor="#FFFF9D">3.3v</td>
+  <td bgcolor="#E10000">&nbsp;</td>
+  <td bgcolor="#666666">&nbsp;</td>
+  <td bgcolor="#E10000">&nbsp;</td>
+  <td bgcolor="#FFFF9D">5v</td>
+  <td bgcolor="#E10000" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td bgcolor="#E10000" class="mode_view-m mode_view-off">&nbsp;</td>
+  <td align="center" bgcolor="#E10000" class="column_view-m column_view-off">&nbsp;</td>
+  <td bgcolor="#E10000" style="font-size:18px; font-weight: bold">&nbsp;&rarr;</td>
+  </tr></tbody></table>
+  </body></html>
